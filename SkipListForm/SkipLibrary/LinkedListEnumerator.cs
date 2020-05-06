@@ -10,11 +10,11 @@ namespace N6_ClassLib.SkipLibrary
     class LinkedListEnumerator<T> : IEnumerator<T> where T : IComparable
     {
 
-        public T Current => cursor.value;
+        public T Current => current.value;
 
-        object IEnumerator.Current => cursor.value;
+        object IEnumerator.Current => current.value;
 
-        Node<T> start, cursor;
+        Node<T> start, current;
 
         public LinkedListEnumerator(Node<T> begin)
         {
@@ -22,20 +22,20 @@ namespace N6_ClassLib.SkipLibrary
             Reset();
         }
 
-        public void Dispose()
-        {
-            start = null;
-        }
-
         public bool MoveNext()
         {
-            cursor = cursor.next;
-            return cursor != null;
+            current = current.next;
+            return current != null;
         }
 
         public void Reset()
         {
-            cursor = start;
+            current = start;
+        }
+
+        public void Dispose()
+        {
+            start = null;
         }
     }
 }

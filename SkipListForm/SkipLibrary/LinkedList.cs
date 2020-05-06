@@ -46,20 +46,6 @@ namespace N6_ClassLib.SkipLibrary
                 layers[0].Display(ref panel, ref x, y, false);
         }
         
-        //индексатор
-        public override T this[int index]
-        {
-            get
-            {
-                if (layers[layerCount - 1][index] == null) //исключение, если список пустой
-                    throw new IndexOutOfRangeException();
-                return layers[layerCount - 1][index].value;
-            }
-            set
-            {
-                //в отсортированной структуре в set нет смысла
-            }
-        }
 
         public override bool IsReadOnly => false;
 
@@ -97,11 +83,13 @@ namespace N6_ClassLib.SkipLibrary
 
             return false;
         }
-
-        public override void CopyTo(T[] array, int arrayIndex)
+        
+        public override void CopyTo(T[] array, int startInd)
         {
-            for (int i = 0; (i < Count) && ((i + arrayIndex) < array.Length); ++i)
-                array[i + arrayIndex] = this[i];
+            for (int i = 0; (i < Count) && ((i + startInd) < array.Length); ++i)
+            {
+                array[i + startInd] = this[i];
+            }
         }
 
         public override int IndexOf(T item)
@@ -109,7 +97,9 @@ namespace N6_ClassLib.SkipLibrary
             int i = 0;
             for (Node<T> node = layers[layerCount - 1].next; node != null; node = node.next, ++i)
                 if (node.value.CompareTo(item) == 0)
+                {
                     return i;
+                }
             return -1;
         }
 
@@ -118,7 +108,7 @@ namespace N6_ClassLib.SkipLibrary
             Node<T> node = layers[0];
             bool contains = false;  //есть ли такой элемент вообще
             //удаление сверху вниз
-            do
+            while (node != null)
             {
                 while ((node.next != null) && (item.CompareTo(node.next.value) > 0))
                 {
@@ -132,7 +122,7 @@ namespace N6_ClassLib.SkipLibrary
                 }
                 //спускаемся ниже, пока не дойдем до конца
                 node = node.down;
-            } while (node != null);
+            }
 
             return contains;
         }
@@ -145,6 +135,21 @@ namespace N6_ClassLib.SkipLibrary
         public override IEnumerator<T> GetEnumerator()
         {
             return new LinkedListEnumerator<T>(layers[layerCount - 1]);
+        }
+
+        //индексатор
+        public override T this[int index]
+        {
+            get
+            {
+                if (layers[layerCount - 1][index] == null) //исключение, если список пустой
+                    throw new IndexOutOfRangeException();
+                return layers[layerCount - 1][index].value;
+            }
+            set
+            {
+                //в отсортированной структуре в set нет смысла
+            }
         }
     }
 }

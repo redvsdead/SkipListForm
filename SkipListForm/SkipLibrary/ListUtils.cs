@@ -23,6 +23,25 @@ namespace N6_ClassLib.SkipLibrary
             return false;
         }
 
+        //возвращает индекс первого элемента списка, удовлетворяющего условиям предиката
+        public static int FindIndex<T>(IList<T> list, CheckDelegate<T> check)
+        {
+            for (int i = 0; i < list.Count; ++i)
+                if (check(list[i]))
+                    return i;
+            return -1;
+        }
+
+        //возвращает индекс последнего элемента списка, удовлетворяющего условиям предиката
+        public static int FindLastIndex<T>(IList<T> list, CheckDelegate<T> check)
+        {
+            int last = -1;
+            for (int i = 0; i < list.Count; ++i)
+                if (check(list[i]))
+                    last = i;
+            return last;
+        }
+
         //возвращает элемент, удовлетворяющий условиям предиката
         public static T Find<T>(IList<T> list, CheckDelegate<T> check)
         {
@@ -50,25 +69,6 @@ namespace N6_ClassLib.SkipLibrary
             throw new Exception("Can not find the element");
         }
 
-        //возвращает индекс первого элемента списка, удовлетворяющего условиям предиката
-        public static int FindIndex<T>(IList<T> list, CheckDelegate<T> check)
-        {
-            for (int i = 0; i < list.Count; ++i)
-                if (check(list[i]))
-                    return i;
-            return -1;
-        }
-
-        //возвращает индекс последнего элемента списка, удовлетворяющего условиям предиката
-        public static int FindLastIndex<T>(IList<T> list, CheckDelegate<T> check)
-        {
-            int last = -1;
-            for (int i = 0; i < list.Count; ++i)
-                if (check(list[i]))
-                    last = i;
-            return last;
-        }
-
         //возвращает все элементы списка, удовлетворяещие условиям предиката
         public static IList<T> FindAll<T>(IList<T> list, CheckDelegate<T> check, ListConstructorDelegate<T> construct)
         {
@@ -81,6 +81,13 @@ namespace N6_ClassLib.SkipLibrary
             return found;
         }
 
+        //применяет делегат к каждому элементу списка
+        public static void ForEach<T>(IList<T> list, ActionDelegate<T> process)
+        {
+            foreach (T item in list)
+                process(item);
+        }
+
         //конвертирует список типа TI в список типа TO
         public static IList<TO> ConvertAll<TI, TO>(IList<TI> list, ConvertDelegate<TI, TO> convert, ListConstructorDelegate<TO> construct)
         {
@@ -88,13 +95,6 @@ namespace N6_ClassLib.SkipLibrary
             foreach (TI item in list)
                 converted.Add(convert(item));
             return converted;
-        }
-
-        //применяет делегат к каждому элементу списка
-        public static void ForEach<T>(IList<T> list, ActionDelegate<T> process)
-        {
-            foreach (T item in list)
-                process(item);
         }
 
         //проверяет все элементы на соответствие предикату

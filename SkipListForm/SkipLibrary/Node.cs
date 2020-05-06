@@ -87,7 +87,7 @@ namespace N6_ClassLib.SkipLibrary
         {
             //отображение текущего узла
             if (visible)
-                panel.Controls.Add(UI.fillTextBox(value, x, y));
+                panel.Controls.Add(Controls.fillTextBox(value, x, y));
             //на нижнем уровне:
             if (down == null)
             {
@@ -95,7 +95,7 @@ namespace N6_ClassLib.SkipLibrary
                 {
                     //отображение оставшейся части списка
                     if (visible)
-                        x += UI.width + UI.left;
+                        x += Controls.Wid + Controls.Lef;
                     next.Display(ref panel, ref x, y, true);
                 }
             }
@@ -104,12 +104,12 @@ namespace N6_ClassLib.SkipLibrary
                 //рисуем нижний узел, если есть узел справа, рисуем и его
                 if (next != null)
                 {
-                    down.Display(ref panel, ref x, y + UI.height + UI.top, visible, next.value);    //перегрузка с 5-ю арг.
+                    down.Display(ref panel, ref x, y + Controls.Hei + Controls.Top, visible, next.value);    //перегрузка с 5-ю арг.
                     next.Display(ref panel, ref x, y, true);
                 }
                 else
                 {
-                    down.Display(ref panel, ref x, y + UI.height + UI.top, visible);
+                    down.Display(ref panel, ref x, y + Controls.Hei + Controls.Top, visible);
                 }
             }
         }
@@ -118,12 +118,12 @@ namespace N6_ClassLib.SkipLibrary
         void Display(ref Forms.Panel panel, ref int x, int y, bool visible, T rightBorder)
         {
             if (visible)
-                panel.Controls.Add(UI.fillTextBox(value, x, y));
+                panel.Controls.Add(Controls.fillTextBox(value, x, y));
 
             if (down == null)
             {
                 if (visible)
-                    x += UI.width + UI.left;
+                    x += Controls.Wid + Controls.Lef;
                 //если не выходит за границу
                 if ((next != null) && (next.value.CompareTo(rightBorder) < 0))
                 {
@@ -135,12 +135,12 @@ namespace N6_ClassLib.SkipLibrary
                 //узел справа отображается, если не выходит за указанную границу
                 if ((next != null) && (next.value.CompareTo(rightBorder) < 0))
                 {
-                    down.Display(ref panel, ref x, y + UI.height + UI.top, visible, next.value);
+                    down.Display(ref panel, ref x, y + Controls.Hei + Controls.Top, visible, next.value);
                     next.Display(ref panel, ref x, y, true, rightBorder);
                 }
                 else
                 {
-                    down.Display(ref panel, ref x, y + UI.height + UI.top, visible, rightBorder);
+                    down.Display(ref panel, ref x, y + Controls.Hei + Controls.Top, visible, rightBorder);
                 }
             }
         }

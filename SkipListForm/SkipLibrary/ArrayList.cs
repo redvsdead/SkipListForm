@@ -55,16 +55,16 @@ namespace N6_ClassLib.SkipLibrary
             for (int j = 0; j < Count; ++j)
             {
                 indexCurr[layerCount - 1] = j + 1;  //+1 нужен для корректной отрисовки на панели
-                panel.Controls.Add(UI.fillTextBox(this[j], 40 + j * (UI.width + UI.left), 40 + (layerCount - 1) * (UI.height + UI.top)));
+                panel.Controls.Add(Controls.fillTextBox(this[j], 40 + j * (Controls.Wid + Controls.Lef), 40 + (layerCount - 1) * (Controls.Hei + Controls.Top)));
                 int i = layerCount - 2; //идем на слой выше, сейчас это второй
                 //пока не дошли до вершины списка && текущий элемент ссылается на свою копию ниже 
                 //и пока можно идти вверх, мы выводим тот же j-й элемент
-                while ((i >= 0) && (layers[i][indexCurr[i]] != null) && (layers[i][indexCurr[i]].down == (indexCurr[i + 1]) - 1))
+                while ((i >= 0) && (layers[i][indexCurr[i]] != null) && (layers[i][indexCurr[i]].down == (indexCurr[i + 1] - 1)))
                 {
                     //отображаем и увеличиваем счетчик соотв. уровня
-                    panel.Controls.Add(UI.fillTextBox(this[j],
-                    40 + j * (UI.width + UI.left),
-                    40 + i * (UI.height + UI.top)));                    
+                    panel.Controls.Add(Controls.fillTextBox(this[j],
+                    40 + j * (Controls.Wid + Controls.Lef),
+                    40 + i * (Controls.Hei + Controls.Top)));                    
                     indexCurr[i]++;   //увеличиваем счетчик и идем на уровень ниже
                     i--;
                 }
@@ -72,25 +72,24 @@ namespace N6_ClassLib.SkipLibrary
         }
 
 
-        //индексатор ячейки
-        public override T this[int index]
+        public override IEnumerator<T> GetEnumerator()
         {
-            get
-            {
-                if ((index < 0) || (index >= currCount))   //проверка на пустоту и выход за границы
-                    throw new IndexOutOfRangeException();
-                return layers[layerCount - 1][index].value;
-            }
-            set
-            {
-                //set не нужен, тк это упорядоченная структура
-            }
+            return new ArrayListEnumerator<T>(layers[layerCount - 1], Count);
+        }
+
+        //возвращает индекс элемента в списке (или -1)
+        public override int IndexOf(T item)
+        {
+            for (int i = 0; (i < maxCount) && (layers[layerCount - 1][i] != null); ++i)
+                if (layers[layerCount - 1][i].value.CompareTo(item) == 0)  //если элемент на каком-то уровне найден, return номер
+                    return i;
+            return -1;
         }
 
         public override bool IsReadOnly => false;
 
         //сдвигает уровень вправо на один элемент, начиная с какого-то индекса
-        private void moveRight(int level, int startIndex)
+        private void moveToRight(int level, int startIndex)
         {
             for (int j = maxCount - 1; j > startIndex; --j)
                 layers[level][j] = layers[level][j - 1];
@@ -102,7 +101,7 @@ namespace N6_ClassLib.SkipLibrary
         }
 
         //абсолютно аналогичный сдвиг влево
-        private void moveLeft(int level, int startIndex)
+        private void moveToLeft(int level, int startIndex)
         {
             for (int j = startIndex; j < maxCount - 1; ++j)
                 layers[level][j] = layers[level][j + 1];
@@ -131,7 +130,7 @@ namespace N6_ClassLib.SkipLibrary
                 if (lower >= 0) //если элемент ниже был добавлен, то идем дальше
                 //если нужно еще добавить элемент на уровень выше, возвращаем номер позиции, если нет, то -2
                 {
-                    moveRight(layer, start);
+                    moveToRight(layer, start);
                     layers[layer][start] = new Cell<T>(item);
                     layers[layer][start].down = lower;
                     //если нужно добавить элемент наверх, то возвращаем нужный индекс, иначе -2
@@ -144,7 +143,7 @@ namespace N6_ClassLib.SkipLibrary
             //иначе на последнем (нижнем) уровне сдвигают кусок вправо с позиции start и на нее просто вставляется элемент
             else
             {
-                moveRight(layer, start);
+                moveToRight(layer, start);
                 layers[layer][start] = new Cell<T>(item);   //на нижнем уровне вставка осуществляется всегда
                 if (randomizer.NextDouble() < variety)   //если проходит по вероятности, возвращаем позицию на след. уровне
                     return start;
@@ -192,19 +191,6 @@ namespace N6_ClassLib.SkipLibrary
                 array[arrayIndex + i] = this[i];
         }
 
-        public override IEnumerator<T> GetEnumerator()
-        {
-            return new ArrayListEnumerator<T>(layers[layerCount - 1], Count);
-        }
-
-        //возвращает индекс элемента в списке (или -1)
-        public override int IndexOf(T item)
-        {
-            for (int i = 0; (i < maxCount) && (layers[layerCount - 1][i] != null); ++i)
-                if (layers[layerCount - 1][i].value.CompareTo(item) == 0)  //если элемент на каком-то уровне найден, return номер
-                    return i;
-            return -1;
-        }
 
         public override bool Remove(T item)
         {
@@ -218,7 +204,7 @@ namespace N6_ClassLib.SkipLibrary
                 //найденный нужный элемент удаляем, отмечаем, что он существует
                 if ((layers[layer][start] != null) && (layers[layer][start].value.CompareTo(item) == 0))
                 {
-                    moveLeft(layer, start);
+                    moveToLeft(layer, start);
                     exists = true;
                 }
                 //если есть слои ниже, то идем удалять по ним
@@ -236,6 +222,22 @@ namespace N6_ClassLib.SkipLibrary
         public override void RemoveAt(int index)
         {
             Remove(this[index]);
+        }
+
+
+        //индексатор ячейки
+        public override T this[int index]
+        {
+            get
+            {
+                if ((index < 0) || (index >= currCount))   //проверка на пустоту и выход за границы
+                    throw new IndexOutOfRangeException();
+                return layers[layerCount - 1][index].value;
+            }
+            set
+            {
+                //set не нужен, тк это упорядоченная структура
+            }
         }
     }
 }

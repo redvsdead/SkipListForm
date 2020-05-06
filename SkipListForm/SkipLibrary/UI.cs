@@ -8,26 +8,26 @@ using Forms = System.Windows.Forms;
 namespace N6_ClassLib.SkipLibrary
 {
     //класс для генерации элементов управления, отображающих ячеки списка
-    class UI
+    class Controls
     {
-        public static int width { get => 50; }
-        public static int height { get => 50; }
-        public static int top { get => 5; }
-        public static int left { get => 50; }
         //textbox для отображения элемента
-        public static Forms.TextBox fillTextBox(object item, int x, int y)
+        public static Forms.TextBox fillTextBox(object obj, int x, int y)
         {
             Forms.TextBox tb = new Forms.TextBox();
+            tb.ReadOnly = true;
             tb.Multiline = true;
-            tb.MaxLength = width;
-            tb.Height = height;
-            tb.MaxLength = 4;
+            tb.BackColor = System.Drawing.Color.Wheat;
+            tb.MaxLength = Wid;
+            tb.Height = Hei;
+            tb.MaxLength = 5;
             tb.Top = y;
             tb.Left = x;
-            tb.ReadOnly = true;
-            tb.BackColor = System.Drawing.Color.White;
-            tb.Text = item.ToString();
+            tb.Text = obj.ToString();
             return tb;
         }
+        public static int Wid { get => 60; }
+        public static int Hei { get => 45; }
+        public static int Top { get => 7; }
+        public static int Lef { get => 45; }
     }
 }

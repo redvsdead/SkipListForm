@@ -9,33 +9,34 @@ namespace N6_ClassLib.SkipLibrary
 {
     class ArrayListEnumerator<T> : IEnumerator<T> where T : IComparable
     {
-        public T Current => array[index].value;
+        public T Current => Arr[index].value;
 
         object IEnumerator.Current => throw new NotImplementedException();
 
-        private Cell<T>[] array;
-        private int index, maxid;
+        private Cell<T>[] Arr;
+        private int index, maxLen;
 
-        public ArrayListEnumerator(Cell<T>[] layer, int maxlen)
+        public ArrayListEnumerator(Cell<T>[] _array, int _maxid)
         {
-            array = layer;
+            Arr = _array;
             index = -1;
-            maxid = maxlen;
-        }
-
-        public void Dispose()
-        {
-            array = null;
+            maxLen = _maxid;
         }
 
         public bool MoveNext()
         {
-            return ++index != maxid;
+            return ++index != maxLen;
         }
 
         public void Reset()
         {
             index = 0;
         }
+
+        public void Dispose()
+        {
+            Arr = null;
+        }
+
     }
 }
