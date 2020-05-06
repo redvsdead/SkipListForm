@@ -1,4 +1,4 @@
-п»їusing System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-//Р·Р°РґР°С‡Р° 6: СЂРµР°Р»РёР·РѕРІР°С‚СЊ Р±РёР±Р»РёРѕС‚РµРєСѓ РєР»Р°СЃСЃРѕРІ РґР»СЏ СЃРїРёСЃРєР° СЃ РїСЂРѕРїСѓСЃРєР°РјРё
-//СЃРµСЂРёСЏ РїСЂРёРјРµСЂРѕРІ: РЅР° С„РѕСЂРјРµ РѕСЂРіР°РЅРёР·СѓРµС‚СЃСЏ С‚СЂРё СЃРїРёСЃРєР° -- С‡РёСЃРµР», СЃС‚СЂРѕРє Рё РєР°С‚Р°Р»РѕРі С†РІРµС‚РѕС‡РЅРѕРіРѕ РјР°РіР°Р·РёРЅР° (РєР»Р°СЃСЃ Flower,
-//РІРєР»СЋС‡Р°СЋС‰РёР№ РІРёРґ Рё С†РІРµС‚ С†РІРµС‚РєР°)
+//Задача 6: реализовать библиотеку классов для списка с пропусками
+//Серия примеров: на форме организуется три списка -- чисел, строк и каталог цветочного магазина (класс Flower,
+//включающий вид и цвет цветка)
 
 namespace SkipListForm
 {
@@ -26,10 +26,7 @@ namespace SkipListForm
         {
             InitializeComponent();
             this.MinimumSize = this.Size;
-            linkedRadio.Checked = true;
-            actionIntButton.Enabled = true;
-            actionStrButton.Enabled = false;
-            actionFlwrButton.Enabled = false;
+            LinkedRadio.Checked = true;
         }
 
         private void listViewBxox_Enter(object sender, EventArgs e)
@@ -38,6 +35,65 @@ namespace SkipListForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
+        }
+
+
+        private void typeTabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ImmutableRadio.Checked)
+            {
+                LinkedRadio.Checked = true;
+                IntList = new N6_ClassLib.SkipLibrary.ArrayList<int>();
+                StrList = new N6_ClassLib.SkipLibrary.ArrayList<string>();
+                FlowerList = new N6_ClassLib.SkipLibrary.ArrayList<Flower>();
+            }
+            else
+            {
+                IntList.Clear();
+                StrList.Clear();
+                FlowerList.Clear();
+            }
+
+            switch (typeTabs.SelectedTab.Text)
+            {
+                case "int":
+                    actionIntButton.Enabled = true;
+                    actionStrButton.Enabled = false;
+                    actionFlwrButton.Enabled = false;
+                    break;
+                case "string":
+                    actionStrButton.Enabled = true;
+                    actionIntButton.Enabled = false;
+                    actionFlwrButton.Enabled = false;
+                    break;
+                case "Flower":
+                    actionFlwrButton.Enabled = true;
+                    actionIntButton.Enabled = false;
+                    actionStrButton.Enabled = false;
+                    break;
+            }
+        }
+
+        private void LinkedRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (LinkedRadio.Checked)
+            {
+                IntList = new N6_ClassLib.SkipLibrary.LinkedList<int>();
+                StrList = new N6_ClassLib.SkipLibrary.LinkedList<string>();
+                FlowerList = new N6_ClassLib.SkipLibrary.LinkedList<Flower>();
+                listViewBox.Controls.Clear();
+            }
+        }
+
+        private void ArrayRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ArrayRadio.Checked)
+            {
+                IntList = new N6_ClassLib.SkipLibrary.ArrayList<int>();
+                StrList = new N6_ClassLib.SkipLibrary.ArrayList<string>();
+                FlowerList = new N6_ClassLib.SkipLibrary.ArrayList<Flower>();
+                listViewBox.Controls.Clear();
+            }
         }
 
         private void actionIntButton_Click(object sender, EventArgs e)
@@ -65,35 +121,49 @@ namespace SkipListForm
                     if (s.Length == 3)
                         ++count;
                 });
+
             MessageBox.Show("There are " + count.ToString() + " 3-letter words");
+        }
+
+        private void ImmutableRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ImmutableRadio.Checked)
+            {
+                IntList = new N6_ClassLib.SkipLibrary.ImmutableList<int>(IntList);
+                StrList = new N6_ClassLib.SkipLibrary.ImmutableList<string>(StrList);
+                FlowerList = new N6_ClassLib.SkipLibrary.ImmutableList<Flower>(FlowerList);
+            }
         }
 
         private void actionFlwrButton_Click(object sender, EventArgs e)
         {
             IList<Flower> flowers = N6_ClassLib.SkipLibrary.ListUtils.FindAll<Flower>(FlowerList, delegate (Flower flw)
             {
-                return flw.colour != "white";
+                return flw.colour == "white";
             },
                 delegate
                 {
-                    if (arrayRadio.Checked)
+                    if (ArrayRadio.Checked)
                         return new N6_ClassLib.SkipLibrary.ArrayList<Flower>();
                     return new N6_ClassLib.SkipLibrary.LinkedList<Flower>();
                 });
-            //Р·Р°РјРµРЅСЏРµРј С‚РµРєСѓС‰РёР№ СЃРїРёСЃРѕРє С†РІРµС‚РѕРІ РЅР° СѓРґРѕРІР»РµС‚РІРѕСЂСЏСЋС‰РёР№ РїСЂРµРґРёРєР°С‚Сѓ
+
+
             FlowerList = (N6_ClassLib.SkipLibrary.SkipList<Flower>)flowers;
-            if (immutableRadio.Checked)
+
+            if (ImmutableRadio.Checked)
             {
                 FlowerList = new N6_ClassLib.SkipLibrary.ImmutableList<Flower>(FlowerList);
             }
-            FlowerList.Display(ref listView);
+
+            FlowerList.Display(ref listViewBox);
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
             try
             {
-                switch (typeTab.SelectedTab.Text)
+                switch (typeTabs.SelectedTab.Text)
                 {
                     case "int":
                         int n;
@@ -102,18 +172,21 @@ namespace SkipListForm
                         else
                         {
                             IntList.Add(n);
-                            IntList.Display(ref listView);
+                            IntList.Display(ref listViewBox);
                         }
                         break;
                     case "string":
                         StrList.Add(stringBox.Text);
-                        StrList.Display(ref listView);
+                        StrList.Display(ref listViewBox);
                         break;
-                    case "flower":
+                    case "Flower":
+                        string name, colour;
+                        name = nameBox.Text;
+                        colour = colourBox.Text;
                         try
                         {
-                            FlowerList.Add(new Flower(typeBox.Text, colourBox.Text));
-                            FlowerList.Display(ref listView);
+                            FlowerList.Add(new Flower(name, colour));
+                            FlowerList.Display(ref listViewBox);
                         }
                         catch (Exception exception)
                         {
@@ -132,28 +205,28 @@ namespace SkipListForm
         {
             try
             {
-                switch (typeTab.SelectedTab.Text)
+                switch (typeTabs.SelectedTab.Text)
                 {
                     case "int":
                         int n;
                         if (!int.TryParse(intBox.Text, out n))
-                            MessageBox.Show("Warning: wrong number", "ERROR");
+                            MessageBox.Show("Неверное число", "Ошибка");
                         else
                         {
                             IntList.Remove(n);
-                            IntList.Display(ref listView);
+                            IntList.Display(ref listViewBox);
                         }
                         break;
                     case "string":
                         StrList.Remove(stringBox.Text);
-                        StrList.Display(ref listView);
+                        StrList.Display(ref listViewBox);
                         break;
                     case "Flower":
-                        string type, colour;
-                        type = typeBox.Text;
+                        string name, colour;
+                        name = nameBox.Text;
                         colour = colourBox.Text;
-                        FlowerList.Remove(new Flower(type, colour));
-                        FlowerList.Display(ref listView);
+                        FlowerList.Remove(new Flower(name, colour));
+                        FlowerList.Display(ref listViewBox);
 
                         break;
                 }
@@ -164,20 +237,20 @@ namespace SkipListForm
             }
         }
 
-        private void searchButton_Click(object sender, EventArgs e)
+        private void findButton_Click(object sender, EventArgs e)
         {
             try
             {
-                switch (typeTab.SelectedTab.Text)
+                switch (typeTabs.SelectedTab.Text)
                 {
                     case "int":
                         int n;
                         if (!int.TryParse(intBox.Text, out n))
-                            MessageBox.Show("Warning: wrong number", "ERROR");
+                            MessageBox.Show("Warning: wrong number", "Error");
                         else
                         {
                             if (IntList.Contains(n))
-                                MessageBox.Show("The list contains such number");
+                                MessageBox.Show("The List contains such number");
                             else
                                 MessageBox.Show("There is no such number");
                         }
@@ -189,11 +262,11 @@ namespace SkipListForm
                             MessageBox.Show("There is no such string");
                         break;
                     case "Flower":
-                        string type, colour;
-                        type = typeBox.Text;
+                        string name, colour;
+                        name = nameBox.Text;
                         colour = colourBox.Text;
-                        if (FlowerList.Contains(new Flower(type, colour)))
-                            MessageBox.Show("The list contains such flower");
+                        if (FlowerList.Contains(new Flower(name, colour)))
+                            MessageBox.Show("The List contains such flower");
                         else
                             MessageBox.Show("There is no such flower");
                         break;
@@ -201,76 +274,7 @@ namespace SkipListForm
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message, "РћС€РёР±РєР°");
-            }
-        }
-
-        private void immutableRadio_CheckedChanged(object sender, EventArgs e)
-        {
-            if (immutableRadio.Checked)
-            {
-                IntList = new N6_ClassLib.SkipLibrary.ImmutableList<int>(IntList);
-                StrList = new N6_ClassLib.SkipLibrary.ImmutableList<string>(StrList);
-                FlowerList = new N6_ClassLib.SkipLibrary.ImmutableList<Flower>(FlowerList);
-            }
-        }
-
-        private void arrayRadio_CheckedChanged(object sender, EventArgs e)
-        {
-            if (arrayRadio.Checked)
-            {
-                IntList = new N6_ClassLib.SkipLibrary.ArrayList<int>();
-                StrList = new N6_ClassLib.SkipLibrary.ArrayList<string>();
-                FlowerList = new N6_ClassLib.SkipLibrary.ArrayList<Flower>();
-                listView.Controls.Clear();
-            }
-        }
-
-        private void linkedRadio_CheckedChanged(object sender, EventArgs e)
-        {
-            if (linkedRadio.Checked)
-            {
-                IntList = new N6_ClassLib.SkipLibrary.LinkedList<int>();
-                StrList = new N6_ClassLib.SkipLibrary.LinkedList<string>();
-                FlowerList = new N6_ClassLib.SkipLibrary.LinkedList<Flower>();
-                listView.Controls.Clear();
-            }
-        }
-
-        private void typeTab_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //immutable РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕР±РѕСЂР°С‡РёРІР°РµС‚ linkedlist, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Р·Р°РЅРёРјР°РµС‚ РјРµРЅСЊС€Рµ РїР°РјСЏС‚Рё
-            if (immutableRadio.Checked)
-            {
-                linkedRadio.Checked = true;
-                IntList = new N6_ClassLib.SkipLibrary.LinkedList<int>();
-                StrList = new N6_ClassLib.SkipLibrary.LinkedList<string>();
-                FlowerList = new N6_ClassLib.SkipLibrary.LinkedList<Flower>();
-            }
-            //РёРЅР°С‡Рµ РѕС‡РёС‰Р°РµРј СЃРїРёСЃРєРё, С‡С‚РѕР±С‹ РЅРµ РїСЂРёС…РѕРґРёР»РѕСЃСЊ РєР°Р¶РґС‹Р№ СЌР»РµРјРµРЅС‚ РІСЂСѓС‡РЅСѓСЋ clear'РѕРј СѓРґР°Р»СЏС‚СЊ
-            else
-            {
-                IntList.Clear();
-                StrList.Clear();
-                FlowerList.Clear();
-            }
-            switch (typeTab.SelectedTab.Text)
-            {
-                case "int":
-                    actionIntButton.Enabled = true;
-                    actionStrButton.Enabled = false;
-                    actionFlwrButton.Enabled = false;
-                    break;
-                case "string":
-                    actionStrButton.Enabled = true;
-                    actionIntButton.Enabled = false;
-                    actionFlwrButton.Enabled = false;
-                    break;
-                case "flower":
-                    actionFlwrButton.Enabled = true;
-                    actionIntButton.Enabled = false;
-                    actionStrButton.Enabled = false;
-                    break;
+                MessageBox.Show(exception.Message, "Ошибка");
             }
         }
     }
