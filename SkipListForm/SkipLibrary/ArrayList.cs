@@ -47,25 +47,25 @@ namespace N6_ClassLib.SkipLibrary
         public override void Display(ref Panel panel)
         {
             panel.Controls.Clear();
-            //массив содержит индекс нижнего элемента для уровня i
-            int[] indexDown = new int[layerCount];
+            //indexCurr[Т] содержит индекс текущего элемента для уровня Т
+            int[] indexCurr = new int[layerCount];
             for (int i = 0; i < layerCount; ++i)
-                indexDown[i] = 0;
+                indexCurr[i] = 0;
             //для каждого элемента нижнего уровня (layerCount - 1) устанавливаем индекс на уровне выше и добавляем элемент управления с информацией о нем
             for (int j = 0; j < Count; ++j)
             {
-                indexDown[layerCount - 1] = j + 1;  //+1 нужен для корректной отрисовки на панели
+                indexCurr[layerCount - 1] = j + 1;  //+1 нужен для корректной отрисовки на панели
                 panel.Controls.Add(UI.fillTextBox(this[j], 40 + j * (UI.width + UI.left), 40 + (layerCount - 1) * (UI.height + UI.top)));
                 int i = layerCount - 2; //идем на слой ниже, сейчас это предпредпоследний
                 //пока не дошли до вершины списка && текущий элемент ссылается на свою копию ниже 
                 //и пока можно идти вверх, мы выводим тот же j-й элемент
-                while ((i >= 0) && (layers[i][indexDown[i]] != null) && (layers[i][indexDown[i]].down == (indexDown[i + 1]) - 1))
+                while ((i >= 0) && (layers[i][indexCurr[i]] != null) && (layers[i][indexCurr[i]].down == (indexCurr[i + 1]) - 1))
                 {
                     //отображаем и увеличиваем счетчик соотв. уровня
                     panel.Controls.Add(UI.fillTextBox(this[j],
                     40 + j * (UI.width + UI.left),
                     40 + i * (UI.height + UI.top)));                    
-                    indexDown[i--]++;   //увеличиваем счетчик для элемента ниже
+                    indexCurr[i--]++;   //увеличиваем счетчик для элемента ниже
                 }
             }
         }
