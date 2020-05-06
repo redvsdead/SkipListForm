@@ -65,7 +65,7 @@ namespace N6_ClassLib.SkipLibrary
                     panel.Controls.Add(UI.fillTextBox(this[j],
                     40 + j * (UI.width + UI.left),
                     40 + i * (UI.height + UI.top)));                    
-                    indexCurr[i--]++;   //увеличиваем счетчик для элемента ниже
+                    indexCurr[i--]++;   //увеличиваем счетчик и идем на уровень ниже
                 }
             }
         }
