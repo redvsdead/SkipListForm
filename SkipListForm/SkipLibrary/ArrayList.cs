@@ -47,11 +47,11 @@ namespace N6_ClassLib.SkipLibrary
         public override void Display(ref Panel panel)
         {
             panel.Controls.Clear();
-            //indexCurr[Т] содержит индекс текущего элемента для уровня Т
+            //indexCurr[N] содержит индекс текущего элемента для уровня N, он нужен, чтобы выводить элемент в столбец от нижнего слоя к верхнему
             int[] indexCurr = new int[layerCount];
             for (int i = 0; i < layerCount; ++i)
                 indexCurr[i] = 0;
-            //для каждого элемента нижнего уровня (layerCount - 1) устанавливаем индекс на уровне выше и добавляем элемент управления с информацией о нем
+            //для каждого элемента нижнего уровня (layerCount - 1) запоминаем его индекс и добавляем элемент управления с информацией о нем
             for (int j = 0; j < Count; ++j)
             {
                 indexCurr[layerCount - 1] = j + 1;  //+1 нужен для корректной отрисовки на панели
